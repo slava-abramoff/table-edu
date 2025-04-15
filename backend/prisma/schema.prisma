@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model confs {
+  id         Int     @id @default(autoincrement())
+  event_name String
+  full_name  String
+  email      String?
+  phone      String
+  start_date String
+  start_time String
+  end_date   String?
+  end_time   String?
+  location   String
+  platform   String? @default("Другое")
+  devices    String? @default("none")
+  status     String? @default("Новая")
+  url        String?
+  short_url  String?
+  user       String?
+  commentary String?
+}
+
+model lectures {
+  id            Int       @id @default(autoincrement())
+  date          String
+  start_time    DateTime
+  end_time      DateTime
+  abnormal_time DateTime?
+  platform      String?
+  corps         String?
+  location      String?
+  groups        String?
+  lectors       String?
+  url           String?
+  short_url     String?
+  stream_key    String?
+  account       String?
+  commentary    String?
+}
+
+model users {
+  id       Int     @id @default(autoincrement())
+  username String  @unique(map: "sqlite_autoindex_users_1")
+  password String
+  role     String? @default("viewer")
+}
