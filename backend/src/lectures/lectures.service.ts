@@ -24,6 +24,52 @@ export interface Days {
 
 @Injectable()
 export class LecturesService {
+  /**
+   * Создать массив дней между датой начала и конца
+   * @param startDate Дата начала
+   * @param endDate Дата конца
+   * @returns массив дат
+   */
+  private generateDateRange(startDate: string, endDate: string): string[] {
+    const dates: string[] = [];
+    const current = new Date(startDate);
+    const end = new Date(endDate);
+
+    while (current <= end) {
+      dates.push(current.toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+  /**
+   * Проверить даты на соответствие месяца и года
+   * @param startDate Дата начала
+   * @param endDate Дата конца
+   */
+  private validateDatesInSameMonthAndYear(startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (
+      start.getFullYear() !== end.getFullYear() ||
+      start.getMonth() !== end.getMonth()
+    ) {
+      throw new HttpException(
+        'Даты должны быть в пределах одного месяца и года',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (start > end) {
+      throw new HttpException(
+        'Начальная дата не может быть позже конечной',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   constructor(private readonly prisma: PrismaService) {}
 
   /**
@@ -32,14 +78,28 @@ export class LecturesService {
    * @returns лекция
    */
   async create(dto: CreateLectureDto) {
-    const { isRecurring, ...rest } = dto;
+    const { repeatUntil, date, ...rest } = dto;
 
-    if (isRecurring) {
-      // TODO: реализовать рекурсивное создание лекций
+    if (repeatUntil) {
+      this.validateDatesInSameMonthAndYear(date, repeatUntil);
+
+      const dates = this.generateDateRange(date, repeatUntil);
+
+      return this.prisma.$transaction(
+        dates.map((item) =>
+          this.prisma.lectures.create({
+            data: {
+              ...rest,
+              date: item,
+            },
+          }),
+        ),
+      );
     }
 
     return await this.prisma.lectures.create({
       data: {
+        date,
         ...rest,
       },
     });

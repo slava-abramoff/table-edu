@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class GetDaysQueryDto {
   @IsString()
@@ -14,10 +14,12 @@ export class CreateLectureDto {
 
   @IsString()
   @IsOptional()
+  repeatUntil: string;
+
+  @IsString()
   start_time: string;
 
   @IsString()
-  @IsOptional()
   end_time: string;
 
   @IsString()
@@ -55,9 +57,6 @@ export class CreateLectureDto {
   @IsString()
   @IsOptional()
   commentary: string;
-
-  @IsBoolean()
-  isRecurring: boolean;
 }
 
 export type UpdateLectureDto = Partial<CreateLectureDto>;
