@@ -31,6 +31,17 @@ export class UsersService {
   }
 
   /**
+   * Получить пользователя
+   * @param id ID пользователя
+   * @returns пользователь
+   */
+  async getOne(username: string): Promise<any> {
+    return await this.prisma.users.findUnique({
+      where: { username },
+    });
+  }
+
+  /**
    * Получить список пользователей
    * @param query Запрос
    * @returns список пользователей с пагинацией
