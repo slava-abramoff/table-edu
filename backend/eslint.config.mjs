@@ -1,3 +1,4 @@
+@ts-check
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
@@ -5,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', '**/dist/**', '**/node_modules/**'],
+    ignores: ['eslint.config.mjs'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -16,30 +17,19 @@ export default tseslint.config(
         ...globals.node,
         ...globals.jest,
       },
-      sourceType: 'module', // лучше использовать 'module' для современных проектов
+      ecmaVersion: 5,
+      sourceType: 'module',
       parserOptions: {
-        project: true, // вместо projectService
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
   },
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off', // лучше 'warn' чем полностью отключать
-      '@typescript-eslint/no-floating-promises': 'off', // важно для асинхронного кода
-      '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      'prettier/prettier': 'off',
-    },
-  },
-  {
-    // Дополнительные настройки для TypeScript
-    files: ['**/*.ts', '**/*.tsx'],
-    rules: {
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/strict-boolean-expressions': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn'
     },
   },
 );

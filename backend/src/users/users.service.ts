@@ -32,12 +32,23 @@ export class UsersService {
 
   /**
    * Получить пользователя
-   * @param id ID пользователя
+   * @param username имя пользователя
    * @returns пользователь
    */
   async getOne(username: string): Promise<any> {
     return await this.prisma.users.findUnique({
       where: { username },
+    });
+  }
+
+  /**
+   * Получить пользователя по ID
+   * @param id ID пользователя
+   * @returns пользователь
+   */
+  async getById(id: number) {
+    return await this.prisma.users.findUnique({
+      where: { id },
     });
   }
 
